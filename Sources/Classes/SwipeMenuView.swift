@@ -152,7 +152,7 @@ public protocol SwipeMenuViewDelegate: class {
     func swipeMenuView(_ swipeMenuView: SwipeMenuView, willChangeIndexFrom fromIndex: Int, to toIndex: Int)
 
     /// Called after swiping the page.
-    func swipeMenuView(_ swipeMenuView: SwipeMenuView, didChangeIndexFrom fromIndex: Int, to toIndex: Int)
+    func swipeMenuView(_ swipeMenuView: SwipeMenuView, didChangeIndexFrom fromIndex: Int, to toIndex: Int, isTapped: Bool)
 }
 
 extension SwipeMenuViewDelegate {
@@ -289,7 +289,7 @@ open class SwipeMenuView: UIView {
         setNeedsLayout()
     }
 
-    fileprivate func update(from fromIndex: Int, to toIndex: Int) {
+    fileprivate func update(from fromIndex: Int, to toIndex: Int, isByTap: Bool) {
 
         if !isLayoutingSubviews {
             delegate?.swipeMenuView(self, willChangeIndexFrom: fromIndex, to: toIndex)
@@ -303,7 +303,7 @@ open class SwipeMenuView: UIView {
         }
 
         if !isJumping && !isLayoutingSubviews {
-            delegate?.swipeMenuView(self, didChangeIndexFrom: fromIndex, to: toIndex)
+            delegate?.swipeMenuView(self, didChangeIndexFrom: fromIndex, to: toIndex, isTapped: isByTap)
         }
     }
 
@@ -380,7 +380,10 @@ extension SwipeMenuView: TabViewDelegate, TabViewDataSource {
 
         contentScrollView.jump(to: index, animated: true)
 
-        update(from: currentIndex, to: index)
+        update(from: currentIndex,
+               to: index,
+               isByTap: true
+        )
     }
 
     public func numberOfItems(in menuView: TabView) -> Int {
@@ -402,9 +405,15 @@ extension SwipeMenuView: UIScrollViewDelegate {
 
         // update currentIndex
         if scrollView.contentOffset.x >= frame.width * CGFloat(currentIndex + 1) {
-            update(from: currentIndex, to: currentIndex + 1)
+            update(from: currentIndex,
+                   to: currentIndex + 1,
+                   isByTap: false
+            )
         } else if scrollView.contentOffset.x <= frame.width * CGFloat(currentIndex - 1) {
-            update(from: currentIndex, to: currentIndex - 1)
+            update(from: currentIndex,
+                   to: currentIndex - 1,
+                   isByTap: false
+            )
         }
 
         updateTabViewAddition(by: scrollView)
