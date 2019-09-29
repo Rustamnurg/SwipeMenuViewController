@@ -304,6 +304,8 @@ open class SwipeMenuView: UIView {
 
         if !isJumping && !isLayoutingSubviews {
             delegate?.swipeMenuView(self, didChangeIndexFrom: fromIndex, to: toIndex, isTapped: isByTap)
+        } else if !isLayoutingSubviews && isByTap {
+            delegate?.swipeMenuView(self, didChangeIndexFrom: fromIndex, to: toIndex, isTapped: isByTap)
         }
     }
 
