@@ -214,7 +214,7 @@ open class SwipeMenuView: UIView {
         return dataSource?.numberOfPages(in: self) ?? 0
     }
 
-    fileprivate var isJumping: Bool = false
+    open private(set) var isJumping: Bool = false
     fileprivate var isPortrait: Bool = true
 
     /// The index of the front page in `SwipeMenuView` (read only).
@@ -425,11 +425,18 @@ extension SwipeMenuView: UIScrollViewDelegate {
 
         if isJumping || isLayoutingSubviews {
             if let toIndex = jumpingToIndex {
-                delegate?.swipeMenuView(self, didChangeIndexFrom: currentIndex, to: toIndex)
+                delegate?.swipeMenuView(
+                    self,
+                    didChangeIndexFrom: currentIndex,
+                    to: toIndex,
+                    isTapped: isJumping
+                )
                 currentIndex = toIndex
                 jumpingToIndex = nil
             }
-            isJumping = false
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.isJumping = false
+            }
             isLayoutingSubviews = false
             return
         }
