@@ -104,6 +104,8 @@ open class TabView: UIScrollView {
             contentWidth = containerView.frame.width + options.margin * 2
         }
         
+        bottomLineView.frame = CGRect(x: 0, y: self.frame.height - 1, width: contentWidth, height: 1)
+        
         if offset < 0 || self.frame.width > contentWidth {
             self.setContentOffset(CGPoint(x: 0, y: 0), animated: animated)
         } else if contentWidth - self.frame.width < offset {
